@@ -16,6 +16,11 @@ object LanguageUtils {
     var currentLang = ""
 
     /**
+     * Could set default value of App Language
+     */
+    var defaultLanguage = "defaultLanguage"
+
+    /**
      * Get Android System Language
      */
     fun getSysLanguage(context: Context?): String? {
@@ -33,23 +38,23 @@ object LanguageUtils {
      */
     fun setAppLanguage(context: Context, storedLocalLang: String) {
         if (currentLang.isNotEmpty() && currentLang == getCurrentAppLanguage()) {
-            LogUtils.d("current language is same with app local language $currentLang")
+            LanguageLogUtils.d("current language is same with app local language $currentLang")
             return
         }
-        if ("default" == currentLang || TextUtils.isEmpty(currentLang)) {
+        if (defaultLanguage == currentLang || TextUtils.isEmpty(currentLang)) {
             if(TextUtils.isEmpty(storedLocalLang)){
                 val appLocale: LocaleListCompat = LocaleListCompat.getDefault()
                 AppCompatDelegate.setApplicationLocales(appLocale)
-                LogUtils.d("current language is default")
+                LanguageLogUtils.d("current language is default")
             } else {
-                LogUtils.d("current language is $storedLocalLang from userprofile")
+                LanguageLogUtils.d("current language is $storedLocalLang from userprofile")
                 val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(storedLocalLang)
                 AppCompatDelegate.setApplicationLocales(appLocale)
             }
         } else {
             val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(currentLang)
             AppCompatDelegate.setApplicationLocales(appLocale)
-            LogUtils.d("current language is $currentLang")
+            LanguageLogUtils.d("current language is $currentLang")
         }
     }
 
@@ -60,39 +65,11 @@ object LanguageUtils {
     fun setAppLanguage(languageAndroid: String) {
         val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(currentLang)
         AppCompatDelegate.setApplicationLocales(appLocale)
-        LogUtils.d("current language is $currentLang")
-    }
-
-    //iOS:  zh-Hant, zh-Hans, en, ja
-    //Android: zh-TW, zh-CN, en-US, ja-JP
-    fun convertLangToIOS(langStr: String): String {
-        if (TextUtils.isEmpty(langStr)) {
-            return "default"
-        }
-        return when (langStr) {
-            "zh-TW" -> "zh-Hant"
-            "zh-CN" -> "zh-Hans"
-            "en-US" -> "en"
-            "ja-JP" -> "ja"
-            else -> ""
-        }
-    }
-
-    fun convertLangToAndroid(langStr: String?): String {
-        if (TextUtils.isEmpty(langStr)) {
-            return "default"
-        }
-        return when (langStr) {
-            "zh-Hant" -> "zh-TW"
-            "zh-Hans" -> "zh-CN"
-            "en" -> "en-US"
-            "ja" -> "ja-JP"
-            else -> "default"
-        }
+        LanguageLogUtils.d("current language is $currentLang")
     }
 
     fun getStringByCurrLanguage(context: Context, strResId: Int): String {
-        return if (TextUtils.isEmpty(currentLang) || currentLang == "default") {
+        return if (TextUtils.isEmpty(currentLang) || currentLang == defaultLanguage) {
             context.getString(strResId)
         } else {
             getStringByTargetLanguage(
@@ -105,7 +82,7 @@ object LanguageUtils {
     }
 
     fun getStringByCurrLanguage(context: Context, strResId: Int, vararg args: String): String {
-        return if (TextUtils.isEmpty(currentLang) || currentLang == "default") {
+        return if (TextUtils.isEmpty(currentLang) || currentLang == defaultLanguage) {
             context.getString(strResId, *args)
         } else {
             getStringByTargetLanguage(
@@ -119,7 +96,7 @@ object LanguageUtils {
     }
 
     fun getStringArrayByCurrLanguage(context: Context, strResId: Int): Array<String> {
-        return if (TextUtils.isEmpty(currentLang) || currentLang == "default") {
+        return if (TextUtils.isEmpty(currentLang) || currentLang == defaultLanguage) {
             context.resources.getStringArray(strResId)
         } else {
             getStringArrayByTargetLanguage(
