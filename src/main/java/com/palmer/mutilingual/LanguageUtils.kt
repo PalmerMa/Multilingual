@@ -62,7 +62,10 @@ object LanguageUtils {
         return AppCompatDelegate.getApplicationLocales().toLanguageTags()
     }
 
-    fun setAppLanguage(languageAndroid: String) {
+    fun setAppLanguage() {
+        if(TextUtils.isEmpty(currentLang)){
+            return
+        }
         val appLocale: LocaleListCompat = LocaleListCompat.forLanguageTags(currentLang)
         AppCompatDelegate.setApplicationLocales(appLocale)
         LanguageLogUtils.d("current language is $currentLang")
